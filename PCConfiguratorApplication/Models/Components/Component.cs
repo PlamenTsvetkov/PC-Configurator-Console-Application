@@ -62,7 +62,7 @@
 
         public override string ToString()
         {
-            return $"Part Number: {this.PartNumber}, Name: {this.Name}. Price: {this.Price:f2}";
+            return $"{this.componentType} Part Number: {this.PartNumber}, Name: {this.Name}. Price: {this.Price:f2}";
         }
     }
 }

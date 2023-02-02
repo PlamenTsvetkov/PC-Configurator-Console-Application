@@ -12,14 +12,22 @@
 
         void AddMotherboard(string componentType, string partNumber, string name,  string socket, decimal price);
 
-        void AddConfiguration(Cpu cpu, Memory memory, Motherboard motherboard);
+        void AddConfiguration(int id, Cpu cpu, Memory memory, Motherboard motherboard);
+
+        string ValidateFullList(string[] input, bool isOrderCompleted);
+
+        string ValidateListWithTwoImputs(string[] input);
+
+        string ValidateListWithOneImput(string[] input);
 
         void LoadInventory();
 
         string Intro();
 
-        //string BeginRace(string racerOneUsername, string racerTwoUsername);
+        void GenerateConigurations();
 
-        //string Report();
+        string GetConigurations();
+
+        string BuyConfiguration(int id);
     }
 }

@@ -2,6 +2,7 @@
 {
     
     using PCConfiguratorApplication.Models.Configurations.Contracts;
+    using PCConfiguratorApplication.Models.Cpus.Contracts;
 
     public class ConfigurationRepository 
     {
@@ -25,5 +26,8 @@
 
         public bool Remove(IConfiguration model)
         => this.models.Remove(model);
+
+        public IConfiguration FindBy(int id)
+      => this.models.FirstOrDefault(c => c.Id == id);
     }
 }

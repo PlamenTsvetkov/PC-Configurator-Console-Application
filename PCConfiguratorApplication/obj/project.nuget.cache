@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "yuDhHTMv1SOZUxy9RMV+trLDiPHytjVvtclN1fFJMODNakXb6+j5ctOmZyRizrYARGGOrq7Y+uxeov3MSnGZ3w==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Plamen\\Desktop\\Transfermate\\PCConfiguratorApplication\\PC-Configurator-Console-Application\\PCConfiguratorApplication\\PCConfiguratorApplication.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Plamen\\.nuget\\packages\\newtonsoft.json\\13.0.2\\newtonsoft.json.13.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}

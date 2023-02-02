@@ -8,6 +8,11 @@
     public class Engine : IEngine
     {
         private const string Separator = ", ";
+        private const string ExitString = "Exit";
+        private const string YestString = "Yes";
+        private const string ConfigurationstString = "Configurations";
+        private const string CongratulationsString = "Congratulations on your purchase!";
+        private const bool IsOrderCompleted = false;
 
         private readonly IWriter writer;
         private readonly IReader reader;
@@ -24,21 +29,87 @@
         {
             controller.LoadInventory();
 
-            string loadInfo;
-            loadInfo =  controller.Intro();
+            controller.GenerateConigurations();
 
-            writer.WriteLine(loadInfo);
-            string[] input = reader.ReadLine().Split(Separator);
 
-            try
+            writer.WriteLine(controller.Intro());
+
+            while (true)
             {
-              
+                string[] input = reader.ReadLine().Split(Separator);
+
+                IsExit(input[0]);
+
+                IsConfigurations(input[0]);
+
+                CheckPartNumber(input);
+                
             }
-            catch (Exception ex)
+        }
+        private void CheckPartNumber(string[] input)
+        {
+            if (input.Length==3)
             {
-                writer.WriteLine(ex.Message);
+                writer.WriteLine(controller.ValidateFullList(input, IsOrderCompleted));
+            }
+            else if (input.Length == 2)
+            {
+                writer.WriteLine(controller.ValidateListWithTwoImputs(input));
+            }
+            else if(input.Length == 1)
+            {
+                writer.WriteLine(controller.ValidateListWithOneImput(input));
+            }
+            else
+            {
+                writer.WriteLine("Wrong input");
+            }
+            if (IsOrderCompleted)
+            {
+                Environment.Exit(0);
             }
 
+        }
+        private void IsConfigurations(string input)
+        {
+            if (input == ConfigurationstString)
+            {
+                string configurationsInfo;
+                configurationsInfo = controller.GetConigurations();
+
+                writer.WriteLine(configurationsInfo);
+
+                string[] configurationsInput = reader.ReadLine().Split(Separator);
+
+                IsExit(configurationsInput[0]);
+
+                var id = Int32.Parse(configurationsInput[0]);
+
+                writer.Write(controller.BuyConfiguration(id));
+
+                string[] response = reader.ReadLine().Split(Separator);
+
+                IsExit(response[0]);
+
+                IsYes(response[0]);
+            }
+        }
+
+        private void  IsExit(string input)
+        {
+            if (input == ExitString)
+            {
+                Environment.Exit(0);
+            }
+        }
+
+        private void IsYes(string input)
+        {
+            if (input == YestString)
+            {
+                writer.WriteLine(CongratulationsString);
+                Environment.Exit(0);
+            }
         }
     }
 }

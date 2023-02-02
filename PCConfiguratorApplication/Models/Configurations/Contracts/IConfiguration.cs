@@ -6,6 +6,8 @@
 
     public interface IConfiguration
     {
+        int Id { get; }
+
         ICpu Cpu { get; }
 
         IMemory Memory { get; }
