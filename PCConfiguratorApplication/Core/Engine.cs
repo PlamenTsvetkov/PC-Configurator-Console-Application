@@ -11,8 +11,9 @@
         private const string ExitString = "Exit";
         private const string YestString = "Yes";
         private const string ConfigurationstString = "Configurations";
-        private const string CongratulationsString = "Congratulations on your purchase!";
-        private const bool IsOrderCompleted = false;
+        private const string CongratulationsString = "Congratulations on your order!";
+        private const string InvalidInput = "Invalid input!";
+    
 
         private readonly IWriter writer;
         private readonly IReader reader;
@@ -27,12 +28,13 @@
 
         public void Run()
         {
+            
             controller.LoadInventory();
 
-            controller.GenerateConigurations();
+            controller.GenerateCofigurations();
 
 
-            writer.WriteLine(controller.Intro());
+            writer.Write(controller.Intro());
 
             while (true)
             {
@@ -43,56 +45,64 @@
                 IsConfigurations(input[0]);
 
                 CheckPartNumber(input);
-                
             }
         }
         private void CheckPartNumber(string[] input)
         {
+            bool IsOrderCompleted = false;
             if (input.Length==3)
             {
-                writer.WriteLine(controller.ValidateFullList(input, IsOrderCompleted));
+                writer.Write(controller.ValidateFullList(input,ref IsOrderCompleted));
             }
             else if (input.Length == 2)
             {
-                writer.WriteLine(controller.ValidateListWithTwoImputs(input));
+                writer.Write(controller.ValidateListWithTwoImputs(input));
             }
             else if(input.Length == 1)
             {
-                writer.WriteLine(controller.ValidateListWithOneImput(input));
+                writer.Write(controller.ValidateListWithOneImput(input));
             }
             else
             {
-                writer.WriteLine("Wrong input");
+                writer.WriteLine(InvalidInput);
             }
             if (IsOrderCompleted)
             {
-                Environment.Exit(0);
+                ProcessTheConfigurationPurchaseResponse();
             }
 
         }
+
         private void IsConfigurations(string input)
         {
+           
             if (input == ConfigurationstString)
             {
-                string configurationsInfo;
-                configurationsInfo = controller.GetConigurations();
+                writer.Write(controller.GetCofigurations());
 
-                writer.WriteLine(configurationsInfo);
-
-                string[] configurationsInput = reader.ReadLine().Split(Separator);
-
-                IsExit(configurationsInput[0]);
-
-                var id = Int32.Parse(configurationsInput[0]);
-
-                writer.Write(controller.BuyConfiguration(id));
-
-                string[] response = reader.ReadLine().Split(Separator);
-
-                IsExit(response[0]);
-
-                IsYes(response[0]);
+                ProcessConfigurationResponse();
             }
+        }
+
+        private void ProcessConfigurationResponse()
+        {
+
+            string[] configurationsInput = reader.ReadLine().Split(Separator);
+
+            bool isThereAConfigurationNumber = true;
+
+            IsExit(configurationsInput[0]);
+
+            var id = Int32.Parse(configurationsInput[0]);
+
+            writer.Write(controller.BuyConfigurationById(id, ref isThereAConfigurationNumber));
+
+            if (!isThereAConfigurationNumber)
+            {
+                ProcessConfigurationResponse();
+            }
+
+            ProcessTheConfigurationPurchaseResponse();
         }
 
         private void  IsExit(string input)
@@ -110,6 +120,15 @@
                 writer.WriteLine(CongratulationsString);
                 Environment.Exit(0);
             }
+        }
+
+        private void ProcessTheConfigurationPurchaseResponse()
+        {
+            string[] response = reader.ReadLine().Split(Separator);
+
+            IsExit(response[0]);
+
+            IsYes(response[0]);
         }
     }
 }

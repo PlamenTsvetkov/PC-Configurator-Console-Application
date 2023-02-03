@@ -24,5 +24,10 @@
 
             private set => this.type = value;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + $", Type: {this.Type}";
+        }
     }
 }

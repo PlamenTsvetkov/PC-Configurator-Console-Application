@@ -6,7 +6,7 @@
 
     using PCConfiguratorApplication.Models.Configurations;
     using PCConfiguratorApplication.Models.Configurations.Contracts;
-    
+
 
     using PCConfiguratorApplication.Models.Cpus;
     using PCConfiguratorApplication.Models.Cpus.Contracts;
@@ -24,11 +24,15 @@
 
     public class Controller : IController
     {
-        private const string ExitMessage = "If you want to exit the program, write \"Exit\" ";
+        private const string InputExitMessage = "\"Exit\" -> If you want to exit the program";
+        private const string InputPartNumberMassage = "\"CPU part numer, DDR Memory part number, Motherboard part number\" -> enter part number(s): ";
+        private const string InputConfigurationsMassage = "\"Configurations\" -> If you want all possible configurations";
+        private const string ConfigurationNumberMessage = "Thере are {0} possible configurations with the provided item";
         private CpuRepository cpus;
         private MemoryRepository memories;
         private MotherboardRepository motherboards;
         private ConfigurationRepository configurations;
+        private bool isThereIncompatibility = false;
 
         public Controller()
         {
@@ -125,6 +129,9 @@
                     sb.AppendLine(item.ToString());
                 }
             }
+
+            sb.AppendLine();
+
             if (memories.Lenght() > 0)
             {
                 foreach (var item in memories.Models)
@@ -132,6 +139,9 @@
                     sb.AppendLine(item.ToString());
                 }
             }
+
+            sb.AppendLine();
+
             if (motherboards.Lenght() > 0)
             {
                 foreach (var item in motherboards.Models)
@@ -139,12 +149,14 @@
                     sb.AppendLine(item.ToString());
                 }
             }
-            sb.AppendLine(ExitMessage);
-            sb.AppendLine("If you want all possible configurations, write \"Configurations\" оr enter part number(s) in format : \"CPU part numer, DDR Memory part number, Motherboard part number\"");
+
+            sb.AppendLine();
+
+            sb.AppendLine($"{InputExitMessage}{Environment.NewLine}{InputConfigurationsMassage}{Environment.NewLine}{InputPartNumberMassage}");
             return sb.ToString().TrimEnd();
         }
 
-        public void GenerateConigurations()
+        public void GenerateCofigurations()
         {
             foreach (var cpu in cpus.Models)
             {
@@ -167,7 +179,7 @@
             }
         }
 
-        public string GetConigurations()
+        public string GetCofigurations()
         {
             var sb = new StringBuilder();
 
@@ -179,46 +191,40 @@
                     sb.AppendLine(configuration.ToString()); ;
                 }
             }
-            sb.AppendLine(ExitMessage);
+            sb.AppendLine(InputExitMessage);
             sb.AppendLine("Please enter configuration number: ");
 
             return sb.ToString().TrimEnd();
         }
 
-        public string BuyConfiguration(int id)
+        public string BuyConfigurationById(int id, ref bool isThereAConfigurationNumber)
         {
             var configuration = configurations.FindBy(id);
-            if (configuration==null)
+            if (configuration == null)
             {
-                return "Error";
+                isThereAConfigurationNumber = false;
+                return String.Format(ExceptionMessages.InvalidConfigurationNumber);
             }
-            var sb = new StringBuilder();
-            sb.AppendLine($"Do you really want to bay {configuration.ToString()} (\"Yes\" / \"Exit\")");
-            return sb.ToString().TrimEnd();
+            return OrderConfirmation(configuration);
         }
 
-        public string ValidateFullList(string[] input,  bool isOrderCompleted)
+        public string ValidateFullList(string[] input, ref bool isOrderCompleted)
         {
             var sb = new StringBuilder();
-           
-            if (configurations.Models.Any(c=>c.Cpu.PartNumber == input[0] && c.Memory.PartNumber == input[1] && c.Motherboard.PartNumber == input[2]))
-            {
-                var item = configurations.Models.FirstOrDefault(c => c.Cpu.PartNumber == input[0] && c.Memory.PartNumber == input[1] && c.Motherboard.PartNumber == input[2]);
-                //sb.AppendLine(String.Format(SuccessMessages.SuccesBuyWithFullList,configuration.Price));
 
-                sb.AppendLine($"Your Configuration");
-                sb.AppendLine($"{item.Cpu.ComponentType} - {item.Cpu.Name} - {item.Cpu.Socket} - {item.Cpu.SupportedMemory} - {item.Cpu.PartNumber}");
-                sb.AppendLine($"{item.Memory.ComponentType} - {item.Memory.Name} - {item.Memory.Type} - {item.Memory.PartNumber}");
-                sb.AppendLine($"{item.Motherboard.ComponentType} - {item.Motherboard.Name} - {item.Motherboard.Socket} - {item.Motherboard.PartNumber}");
-                sb.AppendLine($" Price: {item.Price}");
+            if (configurations.Models.Any(c => c.Cpu.PartNumber == input[0] && c.Memory.PartNumber == input[1] && c.Motherboard.PartNumber == input[2]))
+            {
+                var configuration = configurations.Models.FirstOrDefault(c => c.Cpu.PartNumber == input[0] && c.Memory.PartNumber == input[1] && c.Motherboard.PartNumber == input[2]);
                 isOrderCompleted = true;
+                return OrderConfirmation(configuration);
             }
             else
             {
                 var cpu = cpus.FindBy(input[0]);
-                if (cpu==null)
+                if (cpu == null)
                 {
                     sb.AppendLine(String.Format(ExceptionMessages.InvalidCpuPartNumber, input[0]));
+                    sb.AppendLine(InputPartNumberMassage);
                     return sb.ToString().TrimEnd();
                 }
 
@@ -226,6 +232,7 @@
                 if (memory == null)
                 {
                     sb.AppendLine(String.Format(ExceptionMessages.InvalidMemoryPartNumber, input[1]));
+                    sb.AppendLine(InputPartNumberMassage);
                     return sb.ToString().TrimEnd();
                 }
 
@@ -233,19 +240,22 @@
                 if (motherboard == null)
                 {
                     sb.AppendLine(String.Format(ExceptionMessages.InvalidMotherboardPartNumber, input[2]));
+                    sb.AppendLine(InputPartNumberMassage);
                     return sb.ToString().TrimEnd();
                 }
 
-                if (cpu.SupportedMemory!=memory.Type)
+                if (cpu.SupportedMemory != memory.Type)
                 {
                     sb.AppendLine(String.Format(ExceptionMessages.CpuDontSupportMemory, memory.Type));
                 }
-                if (cpu.Socket!=motherboard.Socket)
+                if (cpu.Socket != motherboard.Socket)
                 {
                     sb.AppendLine(ExceptionMessages.NotSameSocket);
                 }
+                sb.AppendLine(InputPartNumberMassage);
+                return sb.ToString().TrimEnd();
             }
-            return sb.ToString().TrimEnd();
+            
         }
 
         public string ValidateListWithTwoImputs(string[] input)
@@ -256,6 +266,7 @@
             if (cpu == null)
             {
                 sb.AppendLine(String.Format(ExceptionMessages.InvalidCpuPartNumber, input[0]));
+                sb.AppendLine(InputPartNumberMassage);
                 return sb.ToString().TrimEnd();
             }
 
@@ -263,26 +274,29 @@
             if (memory == null)
             {
                 sb.AppendLine(String.Format(ExceptionMessages.InvalidMemoryPartNumber, input[1]));
+                sb.AppendLine(InputPartNumberMassage);
                 return sb.ToString().TrimEnd();
             }
 
             if (cpu.SupportedMemory != memory.Type)
             {
                 sb.AppendLine(String.Format(ExceptionMessages.CpuDontSupportMemory, memory.Type));
+                isThereIncompatibility = true;
             }
 
-            var combination = configurations.Models.Where(c => c.Cpu.PartNumber == input[0] && c.Memory.PartNumber == input[1]);
-            var configurationNumber = 1;
-            foreach (var item in combination)
+            if (isThereIncompatibility)
             {
-                sb.AppendLine($"Configuration {configurationNumber}");
-                sb.AppendLine($"{item.Cpu.ComponentType} - {item.Cpu.Name} - {item.Cpu.Socket} - {item.Cpu.SupportedMemory} - {item.Cpu.PartNumber}");
-                sb.AppendLine($"{item.Memory.ComponentType} - {item.Memory.Name} - {item.Memory.Type} - {item.Memory.PartNumber}");
-                sb.AppendLine($"{item.Motherboard.ComponentType} - {item.Motherboard.Name} - {item.Motherboard.Socket} - {item.Motherboard.PartNumber}");
-                sb.AppendLine($" Price: {item.Price}");
-                configurationNumber++;
+                sb.AppendLine(InputPartNumberMassage);
+                return sb.ToString().TrimEnd();
             }
 
+            return MakePossibleConfiguration(input);
+        }
+
+        public string OrderConfirmation(IConfiguration configuration)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"Do you really want to order {configuration.ToString()} (\"Yes\" / \"Exit\"): ");
             return sb.ToString().TrimEnd();
         }
 
@@ -294,23 +308,40 @@
             if (cpu == null)
             {
                 sb.AppendLine(String.Format(ExceptionMessages.InvalidCpuPartNumber, input[0]));
+                sb.AppendLine(InputPartNumberMassage);
                 return sb.ToString().TrimEnd();
             }
 
-            var combination = configurations.Models.Where(c => c.Cpu.PartNumber == input[0]);
-            var configurationNumber = 1;
-            foreach (var item in combination)
+            return MakePossibleConfiguration(input);
+        }
+
+        private string MakePossibleConfiguration(string[] input)
+        {
+            var sb = new StringBuilder();
+
+            IEnumerable<IConfiguration> possibleConfigurations;
+
+            if (input.Length==1)
             {
-                sb.AppendLine($"Configuration {configurationNumber}");
-                sb.AppendLine($"{item.Cpu.ComponentType} - {item.Cpu.Name} - {item.Cpu.Socket} - {item.Cpu.SupportedMemory} - {item.Cpu.PartNumber}");
-                sb.AppendLine($"{item.Memory.ComponentType} - {item.Memory.Name} - {item.Memory.Type} - {item.Memory.PartNumber}");
-                sb.AppendLine($"{item.Motherboard.ComponentType} - {item.Motherboard.Name} - {item.Motherboard.Socket} - {item.Motherboard.PartNumber}");
-                sb.AppendLine($" Price: {item.Price}");
+                 possibleConfigurations = configurations.Models.Where(c => c.Cpu.PartNumber == input[0]);
+            }
+            else
+            {
+                 possibleConfigurations = configurations.Models.Where(c => c.Cpu.PartNumber == input[0] && c.Memory.PartNumber == input[1]);
+            }
+
+            sb.AppendLine(String.Format(ConfigurationNumberMessage,possibleConfigurations.Count().ToString()));
+            var configurationNumber = 1;
+            foreach (var item in possibleConfigurations)
+            {
+                sb.AppendLine($"N: {configurationNumber}");
+                sb.AppendLine(item.ToString());
+               
                 configurationNumber++;
             }
 
+            sb.AppendLine($"{InputExitMessage}{Environment.NewLine}{InputConfigurationsMassage}{Environment.NewLine}{InputPartNumberMassage}");
             return sb.ToString().TrimEnd();
-
         }
     }
 }

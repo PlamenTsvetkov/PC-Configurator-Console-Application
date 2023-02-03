@@ -7,7 +7,6 @@
 
     public class Configuration : IConfiguration
     {
-        private int id;
         private ICpu cpu;
         private IMemory memory;
         private IMotherboard motherboard;

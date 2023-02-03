@@ -14,7 +14,7 @@
 
         void AddConfiguration(int id, Cpu cpu, Memory memory, Motherboard motherboard);
 
-        string ValidateFullList(string[] input, bool isOrderCompleted);
+        string ValidateFullList(string[] input, ref bool isOrderCompleted);
 
         string ValidateListWithTwoImputs(string[] input);
 
@@ -24,10 +24,10 @@
 
         string Intro();
 
-        void GenerateConigurations();
+        void GenerateCofigurations();
 
-        string GetConigurations();
+        string GetCofigurations();
 
-        string BuyConfiguration(int id);
+        string BuyConfigurationById(int id, ref bool isThereAConfigurationNumber);
     }
 }

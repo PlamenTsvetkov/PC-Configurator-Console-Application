@@ -25,5 +25,10 @@
 
             private set => this.supportedMemory = value;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + $", Supported Memory: {this.SupportedMemory}";
+        }
     }
 }
