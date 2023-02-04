@@ -1,11 +1,10 @@
 ﻿namespace PCConfiguratorApplication.Models.Cpus
 {
-    using PCConfiguratorApplication.Models.Component;
     using PCConfiguratorApplication.Models.Cpus.Contracts;
+    using PCConfiguratorApplication.Models.Component;
 
-    public class Cpu : ComponentWithSocket , ICpu
+    public class Cpu : ComponentWithSocket, ICpu
     {
-        private string supportedMemory;
 
         public Cpu(
             string componentType,
@@ -19,16 +18,11 @@
             this.SupportedMemory = supportedMemory;
         }
 
-        public string SupportedMemory
-        {
-            get => this.supportedMemory;
-
-            private set => this.supportedMemory = value;
-        }
+        public string SupportedMemory { get; private set; }
 
         public override string ToString()
         {
-            return base.ToString() + $", Supported Memory: {this.SupportedMemory}";
+            return base.ToString() + $"|| Supported Memory: {this.SupportedMemory}";
         }
     }
 }

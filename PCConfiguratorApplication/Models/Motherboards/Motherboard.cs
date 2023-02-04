@@ -1,7 +1,7 @@
 ﻿namespace PCConfiguratorApplication.Models.Motherboards
 {
-    using PCConfiguratorApplication.Models.Component;
     using PCConfiguratorApplication.Models.Motherboards.Contracts;
+    using PCConfiguratorApplication.Models.Component;
 
     public class Motherboard : ComponentWithSocket , IMotherboard
     {

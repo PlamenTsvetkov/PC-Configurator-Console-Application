@@ -1,17 +1,12 @@
 ﻿namespace PCConfiguratorApplication.Models.Configurations
 {
     using PCConfiguratorApplication.Models.Configurations.Contracts;
-    using PCConfiguratorApplication.Models.Cpus.Contracts;
-    using PCConfiguratorApplication.Models.Memories.Contracts;
     using PCConfiguratorApplication.Models.Motherboards.Contracts;
+    using PCConfiguratorApplication.Models.Memories.Contracts;
+    using PCConfiguratorApplication.Models.Cpus.Contracts;
 
     public class Configuration : IConfiguration
     {
-        private ICpu cpu;
-        private IMemory memory;
-        private IMotherboard motherboard;
-        
-
         public Configuration(int id, ICpu cpu, IMemory memory, IMotherboard motherboard)
         {
             this.Id = id;
@@ -21,41 +16,17 @@
         }
         public int Id { get; private set; }
 
-        public ICpu Cpu
-        {
-            get => this.cpu;
+        public ICpu Cpu { get; private set; }
 
-            private set
-            {
-                this.cpu = value;
-            }
-        }
+        public IMemory Memory { get; private set; }
 
-        public IMemory Memory
-        {
-            get => this.memory;
-
-            private set
-            {
-                this.memory = value;
-            }
-        }
-
-        public IMotherboard Motherboard
-        {
-            get => this.motherboard;
-
-            private set
-            {
-                this.motherboard = value;
-            }
-        }
+        public IMotherboard Motherboard { get; private set; }
 
         public decimal Price => CalculatePrice();
 
         private decimal CalculatePrice()
         {
-            return this.cpu.Price + this.memory.Price + this.motherboard.Price;
+            return this.Cpu.Price + this.Memory.Price + this.Motherboard.Price;
         }
 
 

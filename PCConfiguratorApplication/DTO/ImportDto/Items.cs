@@ -1,6 +1,7 @@
 ﻿namespace PCConfiguratorApplication.DataProessors.ImportDto
 {
     using PCConfiguratorApplication.Models.Cpus;
+    using PCConfiguratorApplication.Models.Cpus.Contracts;
     using PCConfiguratorApplication.Models.Memories;
     using PCConfiguratorApplication.Models.Motherboards;
 

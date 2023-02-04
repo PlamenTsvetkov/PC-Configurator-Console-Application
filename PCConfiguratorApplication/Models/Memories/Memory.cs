@@ -1,11 +1,10 @@
 ﻿namespace PCConfiguratorApplication.Models.Memories
 {
-    using PCConfiguratorApplication.Models.Component;
     using PCConfiguratorApplication.Models.Memories.Contracts;
+    using PCConfiguratorApplication.Models.Component;
 
     public class Memory : Component, IMemory
     {
-        private string type;
 
         public Memory(
             string componentType,
@@ -18,16 +17,11 @@
             this.Type = type;
         }
 
-        public string Type
-        {
-            get => this.type;
-
-            private set => this.type = value;
-        }
+        public string Type { get; private set; }
 
         public override string ToString()
         {
-            return base.ToString() + $", Type: {this.Type}";
+            return base.ToString() + $"|| Type: {this.Type}";
         }
     }
 }

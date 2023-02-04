@@ -1,8 +1,8 @@
 ﻿namespace PCConfiguratorApplication.Models.Configurations.Contracts
 {
-    using PCConfiguratorApplication.Models.Cpus.Contracts;
-    using PCConfiguratorApplication.Models.Memories.Contracts;
     using PCConfiguratorApplication.Models.Motherboards.Contracts;
+    using PCConfiguratorApplication.Models.Memories.Contracts;
+    using PCConfiguratorApplication.Models.Cpus.Contracts;
 
     public interface IConfiguration
     {

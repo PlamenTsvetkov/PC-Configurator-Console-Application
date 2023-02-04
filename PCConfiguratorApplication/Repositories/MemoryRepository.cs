@@ -1,9 +1,10 @@
 ﻿namespace PCConfiguratorApplication.Repositories
 {
+    using System.Collections.Generic;
+
     using PCConfiguratorApplication.Models.Memories.Contracts;
     using PCConfiguratorApplication.Repositories.Contracts;
     using PCConfiguratorApplication.Utilities;
-    using System.Collections.Generic;
 
     public class MemoryRepository : IRepository<IMemory>
     {

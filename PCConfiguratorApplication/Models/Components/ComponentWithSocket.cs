@@ -4,7 +4,6 @@
 
     public abstract class ComponentWithSocket : Component, IComponentWithSocket
     {
-        private string socket;
 
         protected ComponentWithSocket(
             string componentType,
@@ -17,16 +16,11 @@
             this.Socket = socket;
         }
 
-        public string Socket
-        {
-            get => this.socket;
-
-            private set => this.socket = value;
-        }
+        public string Socket { get; private set; }
 
         public override string ToString()
         {
-            return base.ToString()+ $", Socket: {this.Socket}";
+            return base.ToString()+ $"|| Socket: {this.Socket} ";
         }
     }
 }

@@ -5,13 +5,6 @@
 
     public abstract class Component : IComponent
     {
-
-        private string componentType;
-
-        private string partNumber;
-
-        private string name;
-
         private decimal price;
 
         protected Component(string componentType, string partNumber, string name, decimal price)
@@ -25,26 +18,11 @@
             this.Price = price;
         }
 
-        public string ComponentType
-        {
-            get => this.componentType;
+        public string ComponentType { get; private set; }
 
-            private set => this.componentType = value;
-        }
+        public string PartNumber { get; private set; }
 
-        public string PartNumber
-        {
-            get => this.partNumber;
-
-            private set => this.partNumber = value;
-        }
-
-        public string Name
-        {
-            get => this.name;
-
-            private set => this.name = value;
-        }
+        public string Name { get; private set; }
 
         public decimal Price
         {
@@ -62,7 +40,7 @@
 
         public override string ToString()
         {
-            return $"{this.componentType} Part Number: {this.PartNumber}, Name: {this.Name}. Price: {this.Price:f2}";
+            return $"{this.ComponentType} --> Part Number: {this.PartNumber} || Name: {this.Name} || Price: {this.Price:f2} ";
         }
     }
 }

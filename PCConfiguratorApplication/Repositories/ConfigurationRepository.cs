@@ -2,7 +2,6 @@
 {
     
     using PCConfiguratorApplication.Models.Configurations.Contracts;
-    using PCConfiguratorApplication.Models.Cpus.Contracts;
 
     public class ConfigurationRepository 
     {

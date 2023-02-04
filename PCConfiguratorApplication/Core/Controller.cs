@@ -25,9 +25,11 @@
     public class Controller : IController
     {
         private const string InputExitMessage = "\"Exit\" -> If you want to exit the program";
-        private const string InputPartNumberMassage = "\"CPU part numer, DDR Memory part number, Motherboard part number\" -> enter part number(s): ";
+        private const string InputIntroMessage = "\"Intro\" -> If you want to intro text";
+        private const string InputPartNumberMassage = "Please enter part number(s) in this format -> \"CPU part numer, DDR Memory part number, Motherboard part number\" :";
         private const string InputConfigurationsMassage = "\"Configurations\" -> If you want all possible configurations";
         private const string ConfigurationNumberMessage = "Thере are {0} possible configurations with the provided item";
+
         private CpuRepository cpus;
         private MemoryRepository memories;
         private MotherboardRepository motherboards;
@@ -185,6 +187,7 @@
 
             if (configurations.Lenght() > 0)
             {
+                sb.AppendLine();
                 sb.AppendLine("All possible configurations are as follows:");
                 foreach (var configuration in configurations.Models)
                 {
@@ -192,6 +195,7 @@
                 }
             }
             sb.AppendLine(InputExitMessage);
+            sb.AppendLine(InputIntroMessage);
             sb.AppendLine("Please enter configuration number: ");
 
             return sb.ToString().TrimEnd();
@@ -203,7 +207,9 @@
             if (configuration == null)
             {
                 isThereAConfigurationNumber = false;
+                Console.ForegroundColor = ConsoleColor.Red;
                 return String.Format(ExceptionMessages.InvalidConfigurationNumber);
+                
             }
             return OrderConfirmation(configuration);
         }
@@ -223,6 +229,7 @@
                 var cpu = cpus.FindBy(input[0]);
                 if (cpu == null)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     sb.AppendLine(String.Format(ExceptionMessages.InvalidCpuPartNumber, input[0]));
                     sb.AppendLine(InputPartNumberMassage);
                     return sb.ToString().TrimEnd();
@@ -231,6 +238,7 @@
                 var memory = memories.FindBy(input[1]);
                 if (memory == null)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     sb.AppendLine(String.Format(ExceptionMessages.InvalidMemoryPartNumber, input[1]));
                     sb.AppendLine(InputPartNumberMassage);
                     return sb.ToString().TrimEnd();
@@ -239,6 +247,7 @@
                 var motherboard = motherboards.FindBy(input[2]);
                 if (motherboard == null)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     sb.AppendLine(String.Format(ExceptionMessages.InvalidMotherboardPartNumber, input[2]));
                     sb.AppendLine(InputPartNumberMassage);
                     return sb.ToString().TrimEnd();
@@ -246,10 +255,12 @@
 
                 if (cpu.SupportedMemory != memory.Type)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     sb.AppendLine(String.Format(ExceptionMessages.CpuDontSupportMemory, memory.Type));
                 }
                 if (cpu.Socket != motherboard.Socket)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     sb.AppendLine(ExceptionMessages.NotSameSocket);
                 }
                 sb.AppendLine(InputPartNumberMassage);
@@ -265,6 +276,7 @@
             var cpu = cpus.FindBy(input[0]);
             if (cpu == null)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 sb.AppendLine(String.Format(ExceptionMessages.InvalidCpuPartNumber, input[0]));
                 sb.AppendLine(InputPartNumberMassage);
                 return sb.ToString().TrimEnd();
@@ -273,6 +285,7 @@
             var memory = memories.FindBy(input[1]);
             if (memory == null)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 sb.AppendLine(String.Format(ExceptionMessages.InvalidMemoryPartNumber, input[1]));
                 sb.AppendLine(InputPartNumberMassage);
                 return sb.ToString().TrimEnd();
@@ -286,6 +299,7 @@
 
             if (isThereIncompatibility)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 sb.AppendLine(InputPartNumberMassage);
                 return sb.ToString().TrimEnd();
             }
@@ -296,6 +310,8 @@
         public string OrderConfirmation(IConfiguration configuration)
         {
             var sb = new StringBuilder();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            sb.AppendLine();
             sb.AppendLine($"Do you really want to order {configuration.ToString()} (\"Yes\" / \"Exit\"): ");
             return sb.ToString().TrimEnd();
         }
@@ -307,6 +323,8 @@
             var cpu = cpus.FindBy(input[0]);
             if (cpu == null)
             {
+
+                Console.ForegroundColor = ConsoleColor.Red;
                 sb.AppendLine(String.Format(ExceptionMessages.InvalidCpuPartNumber, input[0]));
                 sb.AppendLine(InputPartNumberMassage);
                 return sb.ToString().TrimEnd();
@@ -343,5 +361,6 @@
             sb.AppendLine($"{InputExitMessage}{Environment.NewLine}{InputConfigurationsMassage}{Environment.NewLine}{InputPartNumberMassage}");
             return sb.ToString().TrimEnd();
         }
+
     }
 }
