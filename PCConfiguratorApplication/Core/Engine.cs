@@ -9,6 +9,8 @@
 
     public class Engine : IEngine
     {
+        // Constants
+        // ----------------
         private const string Separator = ", ";
         private const string ExitString = "Exit";
         private const string YestString = "Yes";
@@ -16,11 +18,14 @@
         private const string IntroString = "Intro";
         private const string InvalidInput = "Invalid input!";
 
-
+        // Fields
+        // ----------------
         private readonly IWriter writer;
         private readonly IReader reader;
         private readonly IController controller;
 
+        // Constructor
+        // ----------------
         public Engine()
         {
             this.writer = new ConsoleWriter();
@@ -28,6 +33,8 @@
             this.controller = new Controller();
         }
 
+        // Methods
+        // ----------------
         public void Run()
         {
 
@@ -45,7 +52,17 @@
 
             while (true)
             {
+                
+                
                 string[] input = reader.ReadLine().Split(Separator, StringSplitOptions.RemoveEmptyEntries);
+
+                if (input.Length == 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    writer.Write($"You have entered an empty field {ExceptionMessages.InputPartNumberMassage}");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    continue;
+                }
 
                 IsExit(input[0].Trim());
 

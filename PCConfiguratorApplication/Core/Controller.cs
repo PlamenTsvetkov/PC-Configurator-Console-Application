@@ -24,18 +24,27 @@
 
     public class Controller : IController
     {
+        // Constants
+        // ----------------
         private const string InputExitMessage = "\"Exit\" -> If you want to exit the program";
-        private const string InputIntroMessage = "\"Intro\" -> If you want to intro text";
-        private const string InputPartNumberMassage = "Please enter part number(s) in this format -> \"CPU part numer, DDR Memory part number, Motherboard part number\" :";
+        private const string InputIntroMessage = "\"Intro\" -> If you want the intro message";
+       
         private const string InputConfigurationsMassage = "\"Configurations\" -> If you want all possible configurations";
-        private const string ConfigurationNumberMessage = "Thере are {0} possible configurations with the provided item";
+        private const string ConfigurationNumberMessage = "Thеrе are {0} possible configurations with the provided item";
 
+        // Fields
+        // ----------------
         private CpuRepository cpus;
         private MemoryRepository memories;
         private MotherboardRepository motherboards;
         private ConfigurationRepository configurations;
+
+        // Members
+        // ----------------
         private bool isThereIncompatibility = false;
 
+        // Constructor
+        // ----------------
         public Controller()
         {
             this.cpus = new CpuRepository();
@@ -43,7 +52,12 @@
             this.motherboards = new MotherboardRepository();
             this.configurations = new ConfigurationRepository();
         }
+        // Methods
+        // ----------------
 
+        /// <summary>
+        /// Мethod that adds cpu to cpu repository
+        /// </summary>
         public void AddCpu(string componentType, string partNumber, string name, string supportMemory, string socket, decimal price)
         {
             ICpu cpu;
@@ -53,6 +67,9 @@
             cpus.Add(cpu);
         }
 
+        /// <summary>
+        /// Мethod that adds DDR Memory to memory repository
+        /// </summary>
         public void AddMemory(string componentType, string partNumber, string name, string type, decimal price)
         {
             IMemory memory;
@@ -62,6 +79,9 @@
             memories.Add(memory);
         }
 
+        /// <summary>
+        /// Мethod that adds motherboard to motherboard repository
+        /// </summary>
         public void AddMotherboard(string componentType, string partNumber, string name, string socket, decimal price)
         {
             IMotherboard motherboard;
@@ -71,6 +91,9 @@
             motherboards.Add(motherboard);
         }
 
+        /// <summary>
+        /// Мethod that adds configuration to configuration repository
+        /// </summary>
         public void AddConfiguration(int id, Cpu cpu, Memory memory, Motherboard motherboard)
         {
             IConfiguration configuration;
@@ -80,6 +103,9 @@
             configurations.Add(configuration);
         }
 
+        /// <summary>
+        ///  Мethod that reads the information from the provided json file and adds the components to the repositories
+        /// </summary>
         public void LoadInventory()
         {
             var data = new Items();
@@ -108,6 +134,9 @@
             }
         }
 
+        /// <summary>
+        /// Мethod that provides the project directory
+        /// </summary>
         static string GetProjectDirectory()
         {
             var currentDirectory = Directory.GetCurrentDirectory();
@@ -117,6 +146,10 @@
             return relativePath;
         }
 
+        /// <summary>
+        /// Мethod that generates an intro message
+        /// </summary>
+        /// <returns>Intro message</returns>
         public string Intro()
         {
             var sb = new StringBuilder();
@@ -154,10 +187,13 @@
 
             sb.AppendLine();
 
-            sb.AppendLine($"{InputExitMessage}{Environment.NewLine}{InputConfigurationsMassage}{Environment.NewLine}{InputPartNumberMassage}");
+            sb.AppendLine($"{InputExitMessage}{Environment.NewLine}{InputConfigurationsMassage}{Environment.NewLine}{ExceptionMessages.InputPartNumberMassage}");
             return sb.ToString().TrimEnd();
         }
 
+        /// <summary>
+        /// Мethod that generates all possible configurations and adds them to repository
+        /// </summary>
         public void GenerateCofigurations()
         {
             foreach (var cpu in cpus.Models)
@@ -181,6 +217,10 @@
             }
         }
 
+        /// <summary>
+        /// Мethod that gives all possible configurations with the available components
+        /// </summary>
+        /// <returns>Message with all possible configurations</returns>
         public string GetCofigurations()
         {
             var sb = new StringBuilder();
@@ -201,6 +241,12 @@
             return sb.ToString().TrimEnd();
         }
 
+        /// <summary>
+        /// Мethod that checks if a configuration with the passed ID number exists
+        /// </summary>
+        /// <param name="id">Configuration ID</param>
+        /// <param name="isThereAConfigurationNumber">Bool reference</param>
+        /// <returns>Error message if the provided ID number does not exist / Order confirmation message if the provided ID number exist</returns>
         public string BuyConfigurationById(int id, ref bool isThereAConfigurationNumber)
         {
             var configuration = configurations.FindBy(id);
@@ -209,11 +255,16 @@
                 isThereAConfigurationNumber = false;
                 Console.ForegroundColor = ConsoleColor.Red;
                 return String.Format(ExceptionMessages.InvalidConfigurationNumber);
-                
             }
             return OrderConfirmation(configuration);
         }
 
+        /// <summary>
+        /// A method that validates a complete list of input data provided
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="isOrderCompleted"></param>
+        /// <returns>Error message if provided part numbers do not exist or are incompatible / Order confirmation message if you provided part numbers exist and are compatible</returns>
         public string ValidateFullList(string[] input, ref bool isOrderCompleted)
         {
             var sb = new StringBuilder();
@@ -231,7 +282,7 @@
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     sb.AppendLine(String.Format(ExceptionMessages.InvalidCpuPartNumber, input[0]));
-                    sb.AppendLine(InputPartNumberMassage);
+                    sb.AppendLine(ExceptionMessages.InputPartNumberMassage);
                     return sb.ToString().TrimEnd();
                 }
 
@@ -240,7 +291,7 @@
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     sb.AppendLine(String.Format(ExceptionMessages.InvalidMemoryPartNumber, input[1]));
-                    sb.AppendLine(InputPartNumberMassage);
+                    sb.AppendLine(ExceptionMessages.InputPartNumberMassage);
                     return sb.ToString().TrimEnd();
                 }
 
@@ -249,7 +300,7 @@
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     sb.AppendLine(String.Format(ExceptionMessages.InvalidMotherboardPartNumber, input[2]));
-                    sb.AppendLine(InputPartNumberMassage);
+                    sb.AppendLine(ExceptionMessages.InputPartNumberMassage);
                     return sb.ToString().TrimEnd();
                 }
 
@@ -263,12 +314,17 @@
                     Console.ForegroundColor = ConsoleColor.Red;
                     sb.AppendLine(ExceptionMessages.NotSameSocket);
                 }
-                sb.AppendLine(InputPartNumberMassage);
+                sb.AppendLine(ExceptionMessages.InputPartNumberMassage);
                 return sb.ToString().TrimEnd();
             }
             
         }
 
+        /// <summary>
+        /// A method that validates a provided list of CPU part number and DDR memory part number
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>Еrror message if provided part numbers do not exist or are incompatible / Message with all possible configurations of the provided parts</returns>
         public string ValidateListWithTwoImputs(string[] input)
         {
             var sb = new StringBuilder();
@@ -278,7 +334,7 @@
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 sb.AppendLine(String.Format(ExceptionMessages.InvalidCpuPartNumber, input[0]));
-                sb.AppendLine(InputPartNumberMassage);
+                sb.AppendLine(ExceptionMessages.InputPartNumberMassage);
                 return sb.ToString().TrimEnd();
             }
 
@@ -287,7 +343,7 @@
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 sb.AppendLine(String.Format(ExceptionMessages.InvalidMemoryPartNumber, input[1]));
-                sb.AppendLine(InputPartNumberMassage);
+                sb.AppendLine(ExceptionMessages.InputPartNumberMassage);
                 return sb.ToString().TrimEnd();
             }
 
@@ -300,13 +356,17 @@
             if (isThereIncompatibility)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                sb.AppendLine(InputPartNumberMassage);
+                sb.AppendLine(ExceptionMessages.InputPartNumberMassage);
                 return sb.ToString().TrimEnd();
             }
 
             return MakePossibleConfiguration(input);
         }
 
+        /// <summary>
+        /// A method that generates an order confirmation message
+        /// </summary>
+        /// <returns>Order confirmation message</returns>
         public string OrderConfirmation(IConfiguration configuration)
         {
             var sb = new StringBuilder();
@@ -316,6 +376,11 @@
             return sb.ToString().TrimEnd();
         }
 
+        /// <summary>
+        /// A method that validates a provided CPU part number
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>Еrror message if provided part number do not exist / Message with all possible configurations of the provided part</returns>
         public string ValidateListWithOneImput(string[] input)
         {
             var sb = new StringBuilder();
@@ -326,13 +391,18 @@
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 sb.AppendLine(String.Format(ExceptionMessages.InvalidCpuPartNumber, input[0]));
-                sb.AppendLine(InputPartNumberMassage);
+                sb.AppendLine(ExceptionMessages.InputPartNumberMassage);
                 return sb.ToString().TrimEnd();
             }
 
             return MakePossibleConfiguration(input);
         }
 
+        /// <summary>
+        /// Generates a message with all possible configurations of the provided parts
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>Мessage with all possible configurations of the provided parts</returns>
         private string MakePossibleConfiguration(string[] input)
         {
             var sb = new StringBuilder();
@@ -358,7 +428,7 @@
                 configurationNumber++;
             }
 
-            sb.AppendLine($"{InputExitMessage}{Environment.NewLine}{InputConfigurationsMassage}{Environment.NewLine}{InputPartNumberMassage}");
+            sb.AppendLine($"{InputExitMessage}{Environment.NewLine}{InputConfigurationsMassage}{Environment.NewLine}{ExceptionMessages.InputPartNumberMassage}");
             return sb.ToString().TrimEnd();
         }
 
