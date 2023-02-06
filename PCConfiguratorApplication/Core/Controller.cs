@@ -39,9 +39,6 @@
         private MotherboardRepository motherboards;
         private ConfigurationRepository configurations;
 
-        // Members
-        // ----------------
-        private bool isThereIncompatibility = false;
 
         // Constructor
         // ----------------
@@ -327,6 +324,8 @@
         /// <returns>Еrror message if provided part numbers do not exist or are incompatible / Message with all possible configurations of the provided parts</returns>
         public string ValidateListWithTwoImputs(string[] input)
         {
+            bool isThereIncompatibility = false;
+
             var sb = new StringBuilder();
 
             var cpu = cpus.FindBy(input[0]);
